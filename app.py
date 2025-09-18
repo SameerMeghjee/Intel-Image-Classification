@@ -3,11 +3,35 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 
-# Load trained model
-model = tf.keras.models.load_model("intel_cnn_model.h5")
+# Define the same CNN architecture
+def build_model():
+    model = tf.keras.Sequential([
+        tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(150,150,3)),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.MaxPooling2D(2,2),
+
+        tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.MaxPooling2D(2,2),
+
+        tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.MaxPooling2D(2,2),
+
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(256, activation='relu'),
+        tf.keras.layers.Dropout(0.5),
+        tf.keras.layers.Dense(6, activation='softmax')
+    ])
+    return model
+
+# Load weights
+model = build_model()
+model.load_weights("intel_model_weights.h5")
 
 class_names = ['buildings', 'forest', 'glacier', 'mountain', 'sea', 'street']
 
+# Streamlit UI
 st.title("🌍 Intel Image Classification")
 st.write("Upload an image and let the model classify it into one of six categories.")
 
