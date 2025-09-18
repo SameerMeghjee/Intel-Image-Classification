@@ -6,50 +6,25 @@ import os
 import gdown
 
 # -----------------------------
-# 1. Download weights if missing
+# 1. Download model if missing
 # -----------------------------
-weights_path = "intel_model_weights.h5"
-file_id = "YOUR_FILE_ID"   # Replace with your Google Drive file ID
-url = f"https://drive.google.com/uc?id={file_id}"
+model_path = "best_model.h5"
+file_id = "1-qqf2-Zjy6qBv2ODfenikxj3vWiz6O6Z"   
+url = f"https://drive.google.com/file/d/1-qqf2-Zjy6qBv2ODfenikxj3vWiz6O6Z/view?usp=drive_link={file_id}"
 
-if not os.path.exists(weights_path):
-    st.write("📥 Downloading model weights...")
-    gdown.download(url, weights_path, quiet=False)
-
-# -----------------------------
-# 2. Define model architecture
-# -----------------------------
-def build_model():
-    model = tf.keras.Sequential([
-        tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(150,150,3)),
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.MaxPooling2D(2,2),
-
-        tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.MaxPooling2D(2,2),
-
-        tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.MaxPooling2D(2,2),
-
-        tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(256, activation='relu'),
-        tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(6, activation='softmax')
-    ])
-    return model
+if not os.path.exists(model_path):
+    st.write("📥 Downloading model...")
+    gdown.download(url, model_path, quiet=False)
 
 # -----------------------------
-# 3. Load weights
+# 2. Load the full model
 # -----------------------------
-model = build_model()
-model.load_weights(weights_path)
+model = tf.keras.models.load_model(model_path)
 
 class_names = ['buildings', 'forest', 'glacier', 'mountain', 'sea', 'street']
 
 # -----------------------------
-# 4. Streamlit UI
+# 3. Streamlit UI
 # -----------------------------
 st.title("🌍 Intel Image Classification")
 st.write("Upload an image and let the model classify it into one of six categories.")
